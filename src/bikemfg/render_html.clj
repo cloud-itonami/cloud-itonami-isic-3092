@@ -574,7 +574,11 @@
     (concat (pair "batch" (store/all-batches seed) (store/all-batches db))
             (pair "equipment" (store/all-equipment seed) (store/all-equipment db)))))
 
-(defn- run-rows [db runs]
+(defn- run-rows
+  "One row per graph run, entirely from each run's own recorded request
+  and audit trail -- no store lookup, so a run that HELD (and therefore
+  wrote nothing) renders exactly as faithfully as one that committed."
+  [runs]
   (for [{:keys [tid request phase] :as r} runs
         :let [o (outcome r)]]
     (row (code tid)
@@ -890,7 +894,7 @@
                <em>Phase</em> column is the operator context each request was submitted under &mdash; the
                same actor, at two points in the rollout."
               ["Thread" "Phase" "Op" "Subject" "Target" "Outcome" "Governor detail"]
-              (run-rows db runs))
+              (run-rows runs))
 
      (attribution-section att)
 
