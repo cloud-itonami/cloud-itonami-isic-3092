@@ -406,12 +406,22 @@
   [db]
   (filterv #(= :governor-hold (:t %)) (store/ledger db)))
 
+(defn- hold-facts
+  "Every ledger fact that records a REFUSAL -- a governor/phase hold or a
+  human rejection. Deliberately excludes `:committed` facts: their
+  `:basis` is the advisor's `:cites` (the fields it used), not a rule
+  vocabulary, and counting those as `rules` inflates the coverage
+  number with things like `:product-category`."
+  [db]
+  (filterv #(#{:governor-hold :approval-rejected} (:t %)) (store/ledger db)))
+
 (defn- rules-exercised
   "The set of hold-rule keywords this run's LEDGER actually carries --
-  read off `:basis`, which `governor/hold-fact` fills from the real
-  violations. Includes the `:approval-rejected` fact's own rule."
+  read off the `:basis` of REFUSAL facts only, which
+  `governor/hold-fact` fills from the real violations. Includes the
+  `:approval-rejected` fact's own `:approver-rejected` rule."
   [db]
-  (into #{} (mapcat :basis) (store/ledger db)))
+  (into #{} (mapcat :basis) (hold-facts db)))
 
 (def ^:private rule-source-files
   "The two namespaces in this repo whose SOURCE declares a hold rule.
@@ -578,7 +588,7 @@
   measurements."
   [db]
   (let [exercised (rules-exercised db)
-        ledger    (store/ledger db)]
+        ledger    (hold-facts db)]
     (for [{:keys [rule source]} (declared-rules)
           :let [facts (filterv #(some #{rule} (:basis %)) ledger)
                 v (first (keep (fn [f] (first (filter #(= rule (:rule %)) (:violations f)))) facts))]]
