@@ -2607,7 +2607,7 @@ img,svg { max-width: 100%; height: auto; }</style></head><body>
         <tr><td><code>invalid-product-category</code></td><td><code>bikemfg/governor.cljc</code></td><td><span class="ok">yes</span></td><td><span class="num">1</span></td><td>:hoverboard は既知の product-category 値ではない</td></tr>
         <tr><td><code>invalid-weight-capacity</code></td><td><code>bikemfg/governor.cljc</code></td><td><span class="ok">yes</span></td><td><span class="num">1</span></td><td>9999.0 は物理的に妥当な weight-capacity-kg の範囲外</td></tr>
         <tr><td><code>invalid-defect-rate</code></td><td><code>bikemfg/governor.cljc</code></td><td><span class="ok">yes</span></td><td><span class="num">1</span></td><td>999.0% は物理的に妥当な不良率の範囲外</td></tr>
-        <tr><td><code>approver-rejected</code></td><td><code>bikemfg/operation.cljc</code></td><td><span class="ok">yes</span></td><td><span class="num">1</span></td><td></td></tr>
+        <tr><td><code>approver-rejected</code></td><td><code>bikemfg/operation.cljc</code></td><td><span class="ok">yes</span></td><td><span class="num">1</span></td><td><span class="muted">&mdash;</span></td></tr>
       </tbody>
     </table>
   </section>
@@ -2653,9 +2653,9 @@ img,svg { max-width: 100%; height: auto; }</style></head><body>
         <tr><td>closed product-category set (<code>registry/valid-product-categories</code>)</td><td><code>bmx-bicycle</code> <code>cargo-bicycle</code> <code>city-bicycle</code> <code>electric-assist-bicycle</code> <code>kids-bicycle</code> <code>manual-wheelchair</code> <code>mobility-scooter</code> <code>mountain-bicycle</code> <code>power-wheelchair</code> <code>road-bicycle</code></td></tr>
         <tr><td>rated weight capacity, kg (<code>registry/weight-capacity-min-kg</code> &hellip; <code>-max-kg</code>)</td><td><span class="num">0</span> &hellip; <span class="num">300</span></td></tr>
         <tr><td>frame-weld / assembly defect rate, % (<code>registry/defect-rate-min-percent</code> &hellip; <code>-max-percent</code>)</td><td><span class="num">0</span> &hellip; <span class="num">100</span></td></tr>
-        <tr><td>closed proposal-effect allowlist (<code>governor/allowed-proposal-effects</code>)</td><td><code>flag</code> <code>propose</code> <code>schedule</code> <code>upsert</code></td></tr>
+        <tr><td>closed proposal-effect allowlist (<code>governor/allowed-proposal-effects</code>)</td><td><code>batch/upsert</code> <code>maintenance/schedule</code> <code>safety-concern/flag</code> <code>shipment/propose</code></td></tr>
         <tr><td>closed op allowlist (<code>governor/allowed-ops</code>)</td><td><code>coordinate-shipment</code> <code>flag-safety-concern</code> <code>log-production-batch</code> <code>schedule-maintenance</code></td></tr>
-        <tr><td>always high-stakes stakes (<code>governor/high-stakes</code>)</td><td><code>safety-concern</code></td></tr>
+        <tr><td>always high-stakes stakes (<code>governor/high-stakes</code>)</td><td><code>coordination/safety-concern</code></td></tr>
         <tr><td>confidence floor (<code>governor/confidence-floor</code>)</td><td><span class="num">0.6</span></td></tr>
       </tbody>
     </table>
@@ -2749,10 +2749,10 @@ img,svg { max-width: 100%; height: auto; }</style></head><body>
     <p class="muted">Zero-padded <code>SHP-nnnnnn</code> sequence numbers built by
                <code>registry/register-shipment</code>, appended immutably on commit.</p>
     <table>
-      <thead><tr><th>Record id</th><th>Kind</th><th>Shipment id</th><th>Equipment</th><th>Immutable</th></tr></thead>
+      <thead><tr><th>Record id</th><th>Kind</th><th>Shipment id</th><th>Immutable</th></tr></thead>
       <tbody>
-        <tr><td><code>SHP-000000</code></td><td>shipment-coordination-draft</td><td><code>ship-1</code></td><td><span class="muted">&mdash;</span></td><td><span class="ok">yes</span></td></tr>
-        <tr><td><code>SHP-000001</code></td><td>shipment-coordination-draft</td><td><code>ship-2</code></td><td><span class="muted">&mdash;</span></td><td><span class="ok">yes</span></td></tr>
+        <tr><td><code>SHP-000000</code></td><td>shipment-coordination-draft</td><td><code>ship-1</code></td><td><span class="ok">yes</span></td></tr>
+        <tr><td><code>SHP-000001</code></td><td>shipment-coordination-draft</td><td><code>ship-2</code></td><td><span class="ok">yes</span></td></tr>
       </tbody>
     </table>
   </section>

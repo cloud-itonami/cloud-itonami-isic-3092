@@ -292,7 +292,13 @@
       (str/replace "<" "&lt;")
       (str/replace ">" "&gt;")))
 
-(defn- kw-str [v] (if (keyword? v) (name v) (str v)))
+(defn- kw-str
+  "A keyword as text, WITH its namespace. `name` would render
+  `:batch/upsert` as `upsert` and `:coordination/safety-concern` as
+  `safety-concern`, which silently drops exactly the part that says
+  which closed allowlist a value belongs to."
+  [v]
+  (if (keyword? v) (subs (str v) 1) (str v)))
 
 (defn- code [v] (str "<code>" (esc v) "</code>"))
 
@@ -598,7 +604,10 @@
              "<span class=\"ok\">yes</span>"
              "<span class=\"critical\">no</span>")
            (n-cell (count facts))
-           (if v (esc (:detail v)) (dash))))))
+           ;; `:approver-rejected` is synthesised by `operation`'s
+           ;; :request-approval node rather than by a governor check, so it
+           ;; carries no detail string. Say so instead of printing "".
+           (if (str/blank? (:detail v)) (dash) (esc (:detail v)))))))
 
 (defn- gate-rows
   "The action gate, DERIVED from the live governor/phase vars -- not a
@@ -685,13 +694,19 @@
            :else (dash))
          (if summary (esc summary) (dash)))))
 
-(defn- draft-record-rows [history id-key]
+(defn- draft-record-rows
+  "Rows over one of the append-only registry-record histories. `extra-key`
+  is nil for shipment records, whose registry record genuinely carries no
+  further field -- rendering a column of dashes there would suggest the
+  data was missing rather than absent by construction."
+  [history id-key extra-key]
   (for [r history]
-    (row (code (get r "record_id"))
-         (esc (get r "kind"))
-         (code (get r id-key))
-         (if-let [e (get r "equipment_id")] (code e) (dash))
-         (bool-cell (get r "immutable")))))
+    (apply row (concat [(code (get r "record_id"))
+                        (esc (get r "kind"))
+                        (code (get r id-key))]
+                       (when extra-key
+                         [(if-let [e (get r extra-key)] (code e) (dash))])
+                       [(bool-cell (get r "immutable"))]))))
 
 ;; ----------------------------- the honest-disclosure sections --------------------
 
@@ -945,13 +960,13 @@
               "Zero-padded <code>MNT-nnnnnn</code> sequence numbers built by
                <code>registry/register-maintenance</code>, appended immutably on commit."
               ["Record id" "Kind" "Maintenance id" "Equipment" "Immutable"]
-              (draft-record-rows (store/maintenance-history db) "maintenance_id"))
+              (draft-record-rows (store/maintenance-history db) "maintenance_id" "equipment_id"))
 
      (section "Draft shipment records (bikemfg.registry)"
               "Zero-padded <code>SHP-nnnnnn</code> sequence numbers built by
                <code>registry/register-shipment</code>, appended immutably on commit."
-              ["Record id" "Kind" "Shipment id" "Equipment" "Immutable"]
-              (draft-record-rows (store/shipment-history db) "shipment_id"))
+              ["Record id" "Kind" "Shipment id" "Immutable"]
+              (draft-record-rows (store/shipment-history db) "shipment_id" nil))
 
      (certificate-section cert)
 
