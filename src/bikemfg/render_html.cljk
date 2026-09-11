@@ -5,7 +5,7 @@
   demo page and no generator at all. This namespace drives the REAL
   actor stack -- `bikemfg.operation` (a compiled langgraph StateGraph)
   -> `bikemfg.governor` -> `bikemfg.store` -- through a scenario grown
-  out of this repo's own `bikemfg.sim` demo driver (`clojure -M:dev:run`,
+  out of this repo's own `bikemfg.sim` demo driver (`kbb -M:dev:run`,
   run BEFORE this file was written to confirm it produces a sensible
   ledger against the real seeded ids `batch-001`..`batch-003` /
   `welder-001` / `testbench-002`), then renders the resulting SSoT,
@@ -75,7 +75,7 @@
   contains NO timestamp and NO generated id, and two consecutive runs
   are byte-identical (verified with `cmp` into two `mktemp -d` dirs).
 
-  Usage: `clojure -M:dev:render-html [out-file]`
+  Usage: `kbb -M:dev:render-html [out-file]`
   (default `docs/samples/operator-console.html`)."
   (:require [clojure.java.io :as io]
             [kotoba.lang.text :as str]
@@ -833,7 +833,7 @@
      "<span class=\"badge\">governor-gated</span> "
      "<span class=\"badge\">coordination-only &middot; every request effect is :propose</span></p>\n"
      "<p class=\"subtitle\">Generated at build time by <code>bikemfg.render-html</code> "
-     "(<code>clojure -M:dev:render-html</code>) by actually running the compiled "
+     "(<code>kbb -M:dev:render-html</code>) by actually running the compiled "
      "<code>bikemfg.operation</code> StateGraph over a freshly seeded store. Every value below was "
      "read back out of that run &mdash; there is no mock markup on this page, and no timestamp, so "
      "successive regenerations are byte-identical. This actor never touches welding, assembly or "
@@ -981,7 +981,7 @@
      "  authority belongs exclusively to the accredited certification body. Every proposal carries a\n"
      "  propose-shaped effect; committing one means a coordination record was logged, never that a\n"
      "  machine was operated or a product was certified.</p>\n"
-     "  <p>Regenerate: <code>clojure -M:dev:render-html</code></p>\n"
+     "  <p>Regenerate: <code>kbb -M:dev:render-html</code></p>\n"
      "</footer>\n"
      "</body></html>\n")))
 
