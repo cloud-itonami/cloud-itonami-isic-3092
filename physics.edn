@@ -1,0 +1,44 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; README: an ISIC 3092 plant welds and assembles bicycle and invalid-carriage
+;; (wheelchair / mobility-scooter) frames and inspects the products on
+;; structural and brake test benches. The physical work around that plant:
+;; an arm loading tube sets and frames into the welding jig, tensile-testing
+;; the aluminium frame tube, and an AMR moving pallets of boxed bicycles to
+;; the dispatch bay.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isic-3092"
+ :cases
+ [{:id :frame-into-weld-jig
+   :kind :manipulator
+   :procedure "loading arm lifts a tacked frame (bicycle up to wheelchair) from the tack station and sets it into the robot-welding jig"
+   :params {:l1-m 0.45 :l2-m 0.40 :m1-kg 5.0 :m2-kg 3.5
+            :from [0.55 0.00] :to [0.25 0.55] :duration-s 1.5 :steps 400}
+   :sweep {:param :payload-kg :values [1.5 3.0 5.0 8.0 12.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 80.0 :basis "estimate: continuous shoulder torque of a ~10 kg-payload collaborative arm class"}
+   :boundary {:lo 0.5 :hi 40.0}}
+  {:id :alu-frame-tube-tensile
+   :kind :material
+   :procedure "incoming inspection: tensile test of a 6061-T6 extruded frame-tube strip specimen (100 mm2 section)"
+   :params {:length-m 0.10 :area-m2 1.0e-4 :youngs-modulus-pa 68.9e9 :hardening-pa 0.7e9
+            :density-kg-m3 2700.0 :max-force-n 35000.0}
+   :sweep {:param :yield-stress-pa :values [200.0e6 225.0e6 240.0e6 260.0e6 290.0e6]}
+   :quantity :yield-force-n
+   :limit {:min 24000.0 :basis "ASTM B221 6061-T6 extruded: minimum yield strength 35 ksi (240 MPa); x 100 mm2 = 24000 N"}
+   :boundary {:lo 180.0e6 :hi 320.0e6}}
+  {:id :boxed-bike-pallet-to-dispatch
+   :kind :transport
+   :procedure "AMR carries a pallet of boxed bicycles (stack CoG 0.9 m) from the packing line to the dispatch bay (50 m)"
+   :params {:mass-kg 150.0 :distance-m 50.0 :v-max-mps 1.2 :a-max-mps2 0.5
+            :brake-decel-mps2 0.8 :drive-force-n 400.0 :crr 0.015
+            :cog-height-m 0.30 :support-half-length-m 0.45 :payload-cog-height-m 0.90
+            :max-time-s 1800.0}
+   :sweep {:param :payload-kg :values [80.0 160.0 320.0 500.0 800.0]}
+   :quantity :cycle-time-s
+   :limit {:max 60.0 :basis "estimate: one dispatch run per minute to keep up with the packing line"}
+   :boundary {:lo 20.0 :hi 3000.0}}]}
