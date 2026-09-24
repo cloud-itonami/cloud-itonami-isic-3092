@@ -4,7 +4,7 @@
   holds, escalation, phase gating) is exercised in
   `bikemfg.governor-contract-test`; the Store contract in
   `bikemfg.store-contract-test`."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [langgraph.graph :as g]
             [bikemfg.operation :as op]
             [bikemfg.store :as store]))
