@@ -77,7 +77,7 @@
 
   Usage: `kbb -M:dev:render-html [out-file]`
   (default `docs/samples/operator-console.html`)."
-  (:require [clojure.java.io :as io]
+  (:require [kotoba.io :as io]
             [kotoba.lang.text :as str]
             [jp-go-dds.skin]
             [langgraph.graph :as g]
@@ -1010,8 +1010,8 @@
     (when (seq missing)
       (throw (ex-info "hold rules declared in src/ but never exercised by this scenario — extend run-demo! or the page overclaims"
                       {:missing (vec missing) :declared (count declared)})))
-    (let [f (java.io.File. ^String out)]
-      (when-let [p (.getParentFile f)] (.mkdirs p))
+    (let [f (io/file ^String out)]
+      (when-let [p (io/parent-file f)] (io/mkdirs p))
       (spit f (render result)))
     (println "wrote" out
              (str "(" (count ledger) " ledger facts, "
