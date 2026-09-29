@@ -10,7 +10,7 @@
  ;; langgraph's own transitive git/sha pin being fetchable.
  ;;
  ;; jp-go-digital-design-system (DADS -- デジタル庁デザインシステム) is this
- ;; workspace's BASE design system (com-junkawasaki/root CLAUDE.md, owner
+ ;; workspace's BASE design system (com-junkawasaki/root AGENTS.md, owner
  ;; decision 2026-08-05). It is consumed as a :git/sha rather than a
  ;; :local/root so a standalone fork outside the monorepo still resolves it.
  ;; ONLY `bikemfg.render-html` uses it, and only at build time -- nothing on
